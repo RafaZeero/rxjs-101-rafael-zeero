@@ -1,4 +1,4 @@
-import { Observable, catchError, filter, interval, map, of, retry, take, zip } from 'rxjs';
+import { Observable, catchError, filter, interval, map, of, repeat, retry, take, zip } from 'rxjs';
 
 const subObj = {
   next: (x: any) => console.log('next ' + x),
@@ -6,7 +6,7 @@ const subObj = {
   complete: () => console.log('done')
 };
 
-const foo$ = zip(interval(500), of('a', 'b', 'c', 'd', 'e', '1')).pipe(
+const foo$ = zip(interval(500), of('a', 'b', 'c', 'd', 'e')).pipe(
   map(([x, y]) => y),
   take(5)
 );
@@ -34,7 +34,13 @@ const catchError2$ = error$.pipe(
 
 const resultError = catchError2$;
 
-resultError.subscribe(subObj);
+// resultError.subscribe(subObj);
 
 /* ########################################## */
-/* Retry */
+/* Retry & Repeat*/
+
+const repeat$ = foo$;
+
+const resultRepeat = repeat$.pipe(repeat());
+
+resultRepeat.subscribe(subObj);
