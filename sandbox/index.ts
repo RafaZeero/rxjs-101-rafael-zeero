@@ -6,6 +6,10 @@ const showLog =
     console.log(message, value);
 
 const interval$ = interval(1000);
+
+/**
+ * EMPTY is a observable<never>
+ */
 const result = interval$.pipe(
   tap(showLog('reading value: ')),
   mergeMap(x => (x % 2 === 1 ? of('a', 'b', 'c') : EMPTY))

@@ -46,3 +46,10 @@ const resultRepeat = repeat$.pipe(repeat());
 resultRepeat.subscribe(subObj);
 
 /* ########################################## */
+/**
+ * of/from
+ * HO-maps
+ * zip/combineLastest
+ *
+ * Saber quando usar e como utilizar tal operador!
+ */
