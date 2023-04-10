@@ -12,6 +12,7 @@ const foo$ = zip(interval(500), of('a', 'b', 'c', 'd', 'e', '1')).pipe(
 );
 
 /* ########################################## */
+/* Error Handling */
 /* Catch Error */
 
 const error$ = interval(500).pipe(map(Math.random));
@@ -28,7 +29,7 @@ const catchError2$ = error$.pipe(
   map(maybeNumber),
   catchError((error, outputObs) => outputObs),
   filter(x => !(x instanceof Error)), // filtering errors!
-  retry(Infinity)
+  retry()
 );
 
 const resultError = catchError2$;
@@ -36,5 +37,4 @@ const resultError = catchError2$;
 resultError.subscribe(subObj);
 
 /* ########################################## */
-
-/* Error Handling */
+/* Retry */
