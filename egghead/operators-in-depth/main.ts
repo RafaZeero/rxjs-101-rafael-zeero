@@ -44,3 +44,5 @@ const repeat$ = foo$;
 const resultRepeat = repeat$.pipe(repeat());
 
 resultRepeat.subscribe(subObj);
+
+/* ########################################## */
