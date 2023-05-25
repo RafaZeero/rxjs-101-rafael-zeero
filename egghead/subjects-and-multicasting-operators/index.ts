@@ -1,4 +1,4 @@
-import { Observer, Subject, interval, take } from 'rxjs';
+import { BehaviorSubject, Observer, ReplaySubject, Subject, interval, take } from 'rxjs';
 import { subscribeObject } from '../../utils/functions';
 
 const observer = subscribeObject;
@@ -52,3 +52,26 @@ setTimeout(() => {
 
 subject.next(1);
 subject.next(2);
+
+/**
+ * FOR VALUE OVER TIME
+ *
+ * Can remember the latest value emitted.
+ * If no value has been emitted, it will fallback to a
+ * default value, that is passed when BehaviorSubject is
+ * created.
+ */
+const behaviorSubject = new BehaviorSubject(0);
+
+/**
+ * REPLAY EVENTS FROM THE PAST
+ *
+ * Can see ALL the values emitted.
+ * @params bufferSize - Can have a buffer size as initial value so
+ * it may see only the last, or the two last, or etc...
+ * Doesn't take an initial value.
+ *
+ * @params windowSize - Second parameter is the window size that dictate
+ * for how long will the replay subject remember the latest values in the past
+ */
+const replaySubject = new ReplaySubject(/* BUFFER SIZE */);
