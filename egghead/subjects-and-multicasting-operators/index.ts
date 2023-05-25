@@ -1,4 +1,12 @@
-import { BehaviorSubject, Observer, ReplaySubject, Subject, interval, take } from 'rxjs';
+import {
+  AsyncSubject,
+  BehaviorSubject,
+  Observer,
+  ReplaySubject,
+  Subject,
+  interval,
+  take
+} from 'rxjs';
 import { subscribeObject } from '../../utils/functions';
 
 const observer = subscribeObject;
@@ -75,3 +83,13 @@ const behaviorSubject = new BehaviorSubject(0);
  * for how long will the replay subject remember the latest values in the past
  */
 const replaySubject = new ReplaySubject(/* BUFFER SIZE */);
+
+/**
+ * Replays one value, only if the observable completes
+ *
+ * User for heavy computations that uses a lot of CPU, and RAM,
+ * and maybe NETWORK REQUESTS
+ *
+ * An eventual event
+ */
+const asyncSubject = new AsyncSubject();
