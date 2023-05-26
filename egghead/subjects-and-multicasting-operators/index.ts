@@ -146,6 +146,12 @@ const withConnectable = timer(1_000).pipe(
   connect(source => combineLatest([source, source]), { connector: () => new ReplaySubject(1) })
 );
 
+// share = publish() + refcount()
+
+/* * * * * * * * * * * * * * * */
+/* PUBLISH IS DEPRECATED IN V8 */
+/* * * * * * * * * * * * * * * */
+
 // publish = connect + Subject
 // publishReplay = connect + ReplaySubject
 // publishBehavior = connect + BehaviorSubject
