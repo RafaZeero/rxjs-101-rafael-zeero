@@ -7,6 +7,7 @@ import {
   combineLatest,
   connect,
   connectable,
+  delay,
   filter,
   forkJoin,
   interval,
@@ -156,6 +157,19 @@ const shared$ = interval(1_000).pipe(
   share()
 );
 
+const result$ = interval(1_000).pipe(
+  tap(x => console.log('source ' + x)),
+  take(10),
+  map(() => Math.random()),
+  connect(
+    source => {
+      const sharedDelayed = source.pipe(delay(500));
+      const merged = merge(sharedDelayed, source);
+      return merged;
+    },
+    { connector: subFactory }
+  )
+);
 // share = publish() + refcount()
 
 /* * * * * * * * * * * * * * * */
@@ -168,14 +182,14 @@ const shared$ = interval(1_000).pipe(
 // publishLast = connect + AsyncSubject
 
 // const subConnectable = withConnectable.subscribe(observer);
-const subConnectable = shared$.subscribe(observer);
+result$.subscribe(observer);
 
-setTimeout(() => {
-  subConnectable.unsubscribe();
-}, 5_000);
+// setTimeout(() => {
+//   subConnectable.unsubscribe();
+// }, 5_000);
 
-setTimeout(() => {
-  shared$.subscribe(observer);
-}, 6_000);
+// setTimeout(() => {
+//   result$.subscribe(observer);
+// }, 6_000);
 
 // connectableObservable$.subscribe(observer);
