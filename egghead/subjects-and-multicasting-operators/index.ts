@@ -4,8 +4,20 @@ import {
   Observer,
   ReplaySubject,
   Subject,
+  combineLatest,
+  connect,
+  connectable,
+  filter,
+  forkJoin,
   interval,
-  take
+  map,
+  merge,
+  multicast,
+  of,
+  share,
+  take,
+  tap,
+  timer
 } from 'rxjs';
 import { subscribeObject } from '../../utils/functions';
 
@@ -58,8 +70,8 @@ setTimeout(() => {
   subject.subscribe(observerB);
 }, 2000);
 
-subject.next(1);
-subject.next(2);
+// subject.next(1);
+// subject.next(2);
 
 /**
  * FOR VALUE OVER TIME
@@ -93,3 +105,56 @@ const replaySubject = new ReplaySubject(/* BUFFER SIZE */);
  * An eventual event
  */
 const asyncSubject = new AsyncSubject();
+
+const source$ = of(1, 2, 3, 4, 5).pipe(
+  tap({
+    subscribe: () => console.log('subscription started'),
+    next: n => console.log(`source emitted ${n}`)
+  })
+);
+
+source$.pipe(
+  // Notice in here we're merging 3 subscriptions to `shared$`.
+  connect(shared$ =>
+    merge(
+      shared$.pipe(map(n => `all ${n}`)),
+      shared$.pipe(
+        filter(n => n % 2 === 0),
+        map(n => `even ${n}`)
+      ),
+      shared$.pipe(
+        filter(n => n % 2 === 1),
+        map(n => `odd ${n}`)
+      )
+    )
+  )
+);
+// .subscribe(console.log);
+
+/**
+ * Change MULTICAST operator with SHARE or CONNECT
+ */
+// const connectableObservable$ = interval(1000).pipe(take(5), multicast(new Subject()));
+const double = (x: number) => x * 2;
+const triple = (x: number) => x * 3;
+const connectableObservable$ = interval(1000).pipe(
+  take(5),
+  share({ connector: () => new Subject() }),
+  connect(shared$ => merge(shared$.pipe(map(double)), shared$.pipe(map(triple))))
+);
+const withConnectable = timer(1_000).pipe(
+  connect(source => combineLatest([source, source]), { connector: () => new ReplaySubject(1) })
+);
+
+// publish = connect + Subject
+// publishReplay = connect + ReplaySubject
+// publishBehavior = connect + BehaviorSubject
+// publishLast = connect + AsyncSubject
+
+const subConnectable = withConnectable.subscribe(observer);
+
+setTimeout(() => {
+  subConnectable.unsubscribe();
+}, 5_000);
+
+// connectableObservable$.subscribe(observer);
