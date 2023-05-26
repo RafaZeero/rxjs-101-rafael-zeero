@@ -142,8 +142,18 @@ const connectableObservable$ = interval(1000).pipe(
   share({ connector: () => new Subject() }),
   connect(shared$ => merge(shared$.pipe(map(double)), shared$.pipe(map(triple))))
 );
+
+const subFactory = () => new Subject();
+
 const withConnectable = timer(1_000).pipe(
-  connect(source => combineLatest([source, source]), { connector: () => new ReplaySubject(1) })
+  connect(source => combineLatest([source, source]), { connector: subFactory }),
+  share()
+);
+
+const shared$ = interval(1_000).pipe(
+  take(10),
+  connect(source => combineLatest([source]), { connector: subFactory }),
+  share()
 );
 
 // share = publish() + refcount()
@@ -157,10 +167,15 @@ const withConnectable = timer(1_000).pipe(
 // publishBehavior = connect + BehaviorSubject
 // publishLast = connect + AsyncSubject
 
-const subConnectable = withConnectable.subscribe(observer);
+// const subConnectable = withConnectable.subscribe(observer);
+const subConnectable = shared$.subscribe(observer);
 
 setTimeout(() => {
   subConnectable.unsubscribe();
 }, 5_000);
+
+setTimeout(() => {
+  shared$.subscribe(observer);
+}, 6_000);
 
 // connectableObservable$.subscribe(observer);
